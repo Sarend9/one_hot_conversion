@@ -7,24 +7,35 @@
     Надо это сделать без get_dummieНs.
 """
 
-import random
 import pandas as pd
+import random
 
-lst = ['robot'] * 10
-lst += ['human'] * 10
-random.shuffle(lst)
-data = pd.DataFrame({'whoAmI': lst})
-print("\nИсходные данные:")
-print(data.head())
-# print(data.to_string())
 
-unique_values = list(set(data['whoAmI']))
+def generate_data(num_robots=10, num_humans=10):
+    lst = ['robot'] * num_robots
+    lst += ['human'] * num_humans
+    random.shuffle(lst)
+    data = pd.DataFrame({'whoAmI': lst})
+    return data
 
-for value in unique_values:
-    data[value] = (data['whoAmI'] == value).astype('int')
 
-data = data.drop('whoAmI', axis=1)
+def one_hot_encode(df, column_name):
+    unique_values = list(set(df[column_name]))
 
-print("\nДанные в one-hot виде:")
-print(data.head())
-# print(data.to_string())
+    for value in unique_values:
+        df[value] = (df[column_name] == value).astype('int')
+
+    df = df.drop(column_name, axis=1)
+    return df
+
+
+if __name__ == "__main__":
+    data = generate_data()
+
+    print("\nИсходные данные:")
+    print(data.head())
+
+    data = one_hot_encode(data, 'whoAmI')
+
+    print("\nДанные в one-hot виде:")
+    print(data.head())
